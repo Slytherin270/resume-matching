@@ -1,0 +1,15 @@
+import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../app/store';
+
+interface Props {
+  children: JSX.Element;
+}
+
+export default function ProtectedRoute({ children }: Props) {
+  const token = useSelector((state: RootState) => state.auth.accessToken);
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}

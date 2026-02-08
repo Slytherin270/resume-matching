@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: resume-matching
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/resume_matching}
+    username: ${DATABASE_USER:resume}
+    password: ${DATABASE_PASSWORD:resume}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cache:
+    type: redis
+
+server:
+  port: ${SERVER_PORT:8080}
+
+security:
+  jwt:
+    issuer: resume-matching
+    access-token-ttl: PT30M
+    refresh-token-ttl: P7D
+    secret: ${JWT_SECRET:dev-secret-change-me}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  metrics:
+    tags:
+      application: resume-matching
+
+resumematching:
+  rate-limit:
+    requests: 60
+    window: PT1M
