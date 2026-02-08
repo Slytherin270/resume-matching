@@ -1,4 +1,4 @@
-package com.example.resumematching.resume.domain;
+package com.example.resumematching.resume.api;
 
 import java.util.UUID;
 

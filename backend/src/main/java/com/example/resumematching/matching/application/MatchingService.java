@@ -1,12 +1,11 @@
 package com.example.resumematching.matching.application;
 
 import com.example.resumematching.core.security.SecurityUtils;
-import com.example.resumematching.resume.domain.Resume;
-import com.example.resumematching.resume.infrastructure.ResumeRepository;
+import com.example.resumematching.resume.api.ResumeLookup;
+import com.example.resumematching.resume.api.ResumeSnapshot;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -14,18 +13,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class MatchingService {
-    private final ResumeRepository resumeRepository;
+    private final ResumeLookup resumeLookup;
 
-    public MatchingService(ResumeRepository resumeRepository) {
-        this.resumeRepository = resumeRepository;
+    public MatchingService(ResumeLookup resumeLookup) {
+        this.resumeLookup = resumeLookup;
     }
 
     @Transactional(readOnly = true)
     @Cacheable(value = "matches", key = "#request.resumeId().toString().concat(':').concat(#request.jobDescription().hashCode().toString())")
     public MatchResult match(MatchCommand command) {
-        Resume resume = resumeRepository.findById(command.resumeId())
-                .orElseThrow(() -> new IllegalArgumentException("Resume not found"));
-        assertOwnership(resume.getUserId());
+        ResumeSnapshot resume = resumeLookup.getResumeForUser(command.resumeId(), SecurityUtils.currentUserId());
 
         Set<String> resumeKeywords = tokenize(resume.getContent());
         Set<String> jobKeywords = tokenize(command.jobDescription());
@@ -33,13 +30,6 @@ public class MatchingService {
         int total = jobKeywords.size();
         int score = total == 0 ? 0 : (int) Math.round((matched * 100.0) / total);
         return new MatchResult(score, (int) matched, total);
-    }
-
-    private void assertOwnership(UUID userId) {
-        UUID currentUserId = SecurityUtils.currentUserId();
-        if (!currentUserId.equals(userId)) {
-            throw new IllegalArgumentException("Resume does not belong to user");
-        }
     }
 
     private Set<String> tokenize(String content) {

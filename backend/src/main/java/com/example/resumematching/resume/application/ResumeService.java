@@ -1,8 +1,8 @@
 package com.example.resumematching.resume.application;
 
 import com.example.resumematching.core.security.SecurityUtils;
+import com.example.resumematching.resume.api.ResumeUploadedEvent;
 import com.example.resumematching.resume.domain.Resume;
-import com.example.resumematching.resume.domain.ResumeUploadedEvent;
 import com.example.resumematching.resume.infrastructure.ResumeRepository;
 import java.time.Instant;
 import java.util.UUID;
