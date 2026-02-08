@@ -1,6 +1,6 @@
 package com.example.resumematching.core.security;
 
-import com.example.resumematching.user.UserPrincipal;
+import com.example.resumematching.user.domain.UserPrincipal;
 import java.util.UUID;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
