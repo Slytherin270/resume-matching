@@ -1,6 +1,6 @@
 package com.example.resumematching.audit.application;
 
-import com.example.resumematching.resume.domain.ResumeUploadedEvent;
+import com.example.resumematching.resume.api.ResumeUploadedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
